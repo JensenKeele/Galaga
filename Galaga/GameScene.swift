@@ -16,7 +16,20 @@ class GameScene: SKScene {
         createBackground()
         makeShip()
     }
-    
+    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+        for touch in touches {
+            let location = touch .location(in: self)
+            ship.position.x = location.x
+            ship.position.y = location.y
+        }
+    }
+    override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
+        for touch in touches {
+            let location = touch .location(in: self)
+            ship.position.x = location.x
+            ship.position.y = location.y
+        }
+    }
     func createBackground() {
         let Stars = SKTexture( imageNamed: "Stars")
         for i in 0...1 {
