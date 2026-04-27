@@ -10,11 +10,11 @@ import GameplayKit
 
 class GameScene: SKScene {
     
-    private var label : SKLabelNode?
-    private var spinnyNode : SKShapeNode?
+    private var ship = SKSpriteNode()
     
     override func didMove(to view: SKView) {
         createBackground()
+        makeShip()
     }
     
     func createBackground() {
@@ -30,5 +30,13 @@ class GameScene: SKScene {
             let moveForever = SKAction.repeatForever (moveLoop)
             StarsBackground.run(moveForever)
         }
+    }
+    func makeShip() {
+        ship.removeFromParent()
+        ship = SKSpriteNode(color: .blue, size: CGSize(width: 50, height: 20))
+        ship.position = CGPoint(x: frame.midX, y: frame.minY + 60)
+        ship.physicsBody = SKPhysicsBody(rectangleOf: ship.size)
+        ship.physicsBody?.isDynamic = false
+        addChild(ship)
     }
 }
