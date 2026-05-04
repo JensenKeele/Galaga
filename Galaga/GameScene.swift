@@ -12,6 +12,7 @@ class GameScene: SKScene {
     
     private var ship = SKSpriteNode()
     
+    
     override func didMove(to view: SKView) {
         createBackground()
         makeShip()
@@ -27,7 +28,10 @@ class GameScene: SKScene {
         for touch in touches {
             let location = touch .location(in: self)
             ship.position.x = location.x
-            ship.position.y = location.y
+            let minY: CGFloat = -400
+            let maxY: CGFloat = -200
+            let clampedY = max(minY, min(location.y, maxY))//clamped limits where the ship can go in the scene
+            ship.position.y = clampedY
         }
     }
     func createBackground() {
