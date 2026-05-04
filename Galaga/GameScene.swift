@@ -31,19 +31,19 @@ class GameScene: SKScene {
         }
     }
     func createBackground() {
-        let Stars = SKTexture( imageNamed: "Stars")
-        for i in 0...1 {
-            let StarsBackground = SKSpriteNode(texture: Stars)
-            StarsBackground.zPosition = -1
-            StarsBackground.position = CGPoint(x: 0, y: StarsBackground.size.height * CGFloat(i))
-            addChild(StarsBackground)
-            let moveDown = SKAction.moveBy(x: 0, y: -StarsBackground.size.height, duration: 20)
-            let moveReset = SKAction.moveBy(x: 0, y: StarsBackground.size.height, duration: 0)
-            let moveLoop = SKAction.sequence ([moveDown, moveReset])
-            let moveForever = SKAction.repeatForever (moveLoop)
-            StarsBackground.run(moveForever)
+            let Stars = SKTexture(imageNamed: "Stars")
+            for i in 0...1 {
+                let StarsBackground = SKSpriteNode(texture: Stars)
+                StarsBackground.zPosition = -1
+                StarsBackground.position = CGPoint(x: 0, y: StarsBackground.size.height * CGFloat(i))
+                addChild(StarsBackground)
+                let moveDown = SKAction.moveBy(x: 0, y: -StarsBackground.size.height, duration: 20)
+                let moveReset = SKAction.moveBy(x: 0, y: StarsBackground.size.height, duration: 0)
+                let moveLoop = SKAction.sequence([moveDown, moveReset])
+                let moveForever = SKAction.repeatForever(moveLoop)
+                StarsBackground.run(moveForever)
+            }
         }
-    }
     func makeShip() {
         ship.removeFromParent()
         ship = SKSpriteNode(color: .blue, size: CGSize(width: 50, height: 20))
