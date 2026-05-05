@@ -11,11 +11,12 @@ import GameplayKit
 class GameScene: SKScene {
     
     private var ship = SKSpriteNode()
-    
+    private var missle = SKSpriteNode()
     
     override func didMove(to view: SKView) {
         createBackground()
         makeShip()
+        makeMissle()
     }
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         for touch in touches {
@@ -55,5 +56,13 @@ class GameScene: SKScene {
         ship.physicsBody = SKPhysicsBody(rectangleOf: ship.size)
         ship.physicsBody?.isDynamic = false
         addChild(ship)
+    }
+    func makeMissle() {
+        missle.removeFromParent()
+        missle = SKSpriteNode(color: .red, size: CGSize(width: 7.5, height: 20))
+        missle.physicsBody = SKPhysicsBody(rectangleOf: missle.size)
+        missle.physicsBody?.isDynamic = false
+        missle.position = CGPoint(x: ship.position.x, y: ship.position.y + ship.size.height / 2) // spawns the missle right on the ship
+        addChild(missle)
     }
 }
