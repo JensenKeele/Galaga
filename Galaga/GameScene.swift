@@ -17,6 +17,7 @@ class GameScene: SKScene {
         createBackground()
         makeShip()
         makeMissle()
+        missleLaunch()
     }
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         for touch in touches {
@@ -49,6 +50,7 @@ class GameScene: SKScene {
                 StarsBackground.run(moveForever)
             }
         }
+    
     func makeShip() {
         ship.removeFromParent()
         ship = SKSpriteNode(color: .blue, size: CGSize(width: 50, height: 20))
@@ -57,12 +59,25 @@ class GameScene: SKScene {
         ship.physicsBody?.isDynamic = false
         addChild(ship)
     }
+    
     func makeMissle() {
-        missle.removeFromParent()
         missle = SKSpriteNode(color: .red, size: CGSize(width: 7.5, height: 20))
         missle.physicsBody = SKPhysicsBody(rectangleOf: missle.size)
         missle.physicsBody?.isDynamic = false
-        missle.position = CGPoint(x: ship.position.x, y: ship.position.y + ship.size.height / 2) // spawns the missle right on the ship
+        missle.position = CGPoint(x: ship.position.x, y: ship.position.y + ship.size.height / 3) // spawns the missle right on the ship
+        let moveUp = SKAction.moveBy(x: 0, y: 1000, duration: 3)
+        let remove = SKAction.removeFromParent()
+        missle.run(SKAction.sequence([moveUp, remove]))
         addChild(missle)
+    }
+    
+    func missleLaunch() {
+        let shoot = SKAction.run { [weak self] in //weak self would break the loop if make missle goes away
+            self?.makeMissle()
+        }
+        let delay = SKAction.wait(forDuration: 1) //determines fire rate
+        let sequence = SKAction.sequence([shoot, delay]) // shows the order of operations shoot, delay, then repeat
+        
+        run (SKAction.repeatForever(sequence)) // repeats the sequence over and over again
     }
 }
