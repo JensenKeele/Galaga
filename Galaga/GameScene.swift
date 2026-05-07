@@ -19,14 +19,16 @@ class GameScene: SKScene {
         makeMissle()
         missleLaunch()
     }
+    
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
-        for touch in touches {
-            let location = touch .location(in: self)
-            ship.position.x = location.x
-            ship.position.y = location.y
-        }
+        shipMovement(touches, with: event)
     }
+    
     override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
+        shipMovement(touches, with: event)
+    }
+
+    func shipMovement(_ touches: Set<UITouch>, with event: UIEvent?) {
         for touch in touches {
             let location = touch .location(in: self)
             ship.position.x = location.x
@@ -36,6 +38,7 @@ class GameScene: SKScene {
             ship.position.y = clampedY
         }
     }
+    
     func createBackground() {
             let Stars = SKTexture(imageNamed: "Stars")
             for i in 0...1 {
@@ -65,8 +68,8 @@ class GameScene: SKScene {
         missle.physicsBody = SKPhysicsBody(rectangleOf: missle.size)
         missle.physicsBody?.isDynamic = false
         missle.position = CGPoint(x: ship.position.x, y: ship.position.y + ship.size.height / 3) // spawns the missle right on the ship
-        let moveUp = SKAction.moveBy(x: 0, y: 1000, duration: 3)
-        let remove = SKAction.removeFromParent()
+        let moveUp = SKAction.moveBy(x: 0, y: 1000, duration: 3) //speed of bullets
+        let remove = SKAction.removeFromParent() //removes the bullet from the canvas after the duration
         missle.run(SKAction.sequence([moveUp, remove]))
         addChild(missle)
     }
