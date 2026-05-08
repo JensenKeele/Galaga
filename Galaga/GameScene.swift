@@ -13,12 +13,9 @@ class GameScene: SKScene {
     private var ship = SKSpriteNode()
     private var missle = SKSpriteNode()
     private var enemy = SKSpriteNode()
-<<<<<<< Updated upstream
     private var lives = 3
     private var livesLabel = SKLabelNode()
-=======
     private var enemies: [SKSpriteNode] = []
->>>>>>> Stashed changes
     
     override func didMove(to view: SKView) {
         createBackground()
@@ -26,11 +23,8 @@ class GameScene: SKScene {
         makeMissle()
         missleLaunch()
         makeEnemy()
-<<<<<<< Updated upstream
         makeLabels()
-=======
         makeEnemies()
->>>>>>> Stashed changes
     }
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
@@ -123,11 +117,11 @@ class GameScene: SKScene {
         enemies.removeAll()
         // number of enemies to spawn and well spaced out
         let count = 6
+        let spacing: CGFloat = 50
         for i in 0..<count {
             let enemy = SKSpriteNode(color: .red,size: CGSize(width: 30, height: 20))
             enemies.append(enemy)
-            enemy.position = CGPoint(x: frame.midX - CGFloat(count - 1) * (30 + spacing) / 2 + CGFloat(i) * (30 + spacing),
-                y: frame.maxY + enemy.size.height / 2)
+            enemy.position = CGPoint(x: frame.midX - CGFloat(count - 2) * 50 / 2 + CGFloat(i) * 50,y: frame.maxY + enemy.size.height / 2)
             addChild(enemy)
             let moveDown = SKAction.moveTo(y: frame.midY + 120,duration: 4)
             enemy.run(moveDown)
