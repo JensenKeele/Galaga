@@ -12,12 +12,14 @@ class GameScene: SKScene {
     
     private var ship = SKSpriteNode()
     private var missle = SKSpriteNode()
+    private var enemy = SKSpriteNode()
     
     override func didMove(to view: SKView) {
         createBackground()
         makeShip()
         makeMissle()
         missleLaunch()
+        makeEnemy()
     }
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
@@ -82,5 +84,17 @@ class GameScene: SKScene {
         let sequence = SKAction.sequence([shoot, delay]) // shows the order of operations shoot, delay, then repeat
         
         run (SKAction.repeatForever(sequence)) // repeats the sequence over and over again
+    }
+    
+    func makeEnemy() {
+        enemy.removeFromParent()
+        enemy = SKSpriteNode(color: .red, size: CGSize(width: 50, height: 20))
+        // this will help position enemy above
+        enemy.position = CGPoint(x: frame.midX, y: frame.maxY + enemy.size.height / 2)
+        addChild(enemy)
+
+        // this will allow the enemy to move just above the player ship
+        let moveDown = SKAction.moveTo(y: frame.midY + 120, duration: 4)
+        enemy.run(moveDown)
     }
 }
