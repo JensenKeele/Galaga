@@ -13,6 +13,8 @@ class GameScene: SKScene {
     private var ship = SKSpriteNode()
     private var missle = SKSpriteNode()
     private var enemy = SKSpriteNode()
+    private var lives = 3
+    private var livesLabel = SKLabelNode()
     
     override func didMove(to view: SKView) {
         createBackground()
@@ -20,6 +22,7 @@ class GameScene: SKScene {
         makeMissle()
         missleLaunch()
         makeEnemy()
+        makeLabels()
     }
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
@@ -29,7 +32,7 @@ class GameScene: SKScene {
     override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
         shipMovement(touches, with: event)
     }
-
+    
     func shipMovement(_ touches: Set<UITouch>, with event: UIEvent?) {
         for touch in touches {
             let location = touch .location(in: self)
@@ -42,19 +45,19 @@ class GameScene: SKScene {
     }
     
     func createBackground() {
-            let Stars = SKTexture(imageNamed: "Stars")
-            for i in 0...1 {
-                let StarsBackground = SKSpriteNode(texture: Stars)
-                StarsBackground.zPosition = -1
-                StarsBackground.position = CGPoint(x: 0, y: StarsBackground.size.height * CGFloat(i))
-                addChild(StarsBackground)
-                let moveDown = SKAction.moveBy(x: 0, y: -StarsBackground.size.height, duration: 20)
-                let moveReset = SKAction.moveBy(x: 0, y: StarsBackground.size.height, duration: 0)
-                let moveLoop = SKAction.sequence([moveDown, moveReset])
-                let moveForever = SKAction.repeatForever(moveLoop)
-                StarsBackground.run(moveForever)
-            }
+        let Stars = SKTexture(imageNamed: "Stars")
+        for i in 0...1 {
+            let StarsBackground = SKSpriteNode(texture: Stars)
+            StarsBackground.zPosition = -1
+            StarsBackground.position = CGPoint(x: 0, y: StarsBackground.size.height * CGFloat(i))
+            addChild(StarsBackground)
+            let moveDown = SKAction.moveBy(x: 0, y: -StarsBackground.size.height, duration: 20)
+            let moveReset = SKAction.moveBy(x: 0, y: StarsBackground.size.height, duration: 0)
+            let moveLoop = SKAction.sequence([moveDown, moveReset])
+            let moveForever = SKAction.repeatForever(moveLoop)
+            StarsBackground.run(moveForever)
         }
+    }
     
     func makeShip() {
         ship.removeFromParent()
@@ -86,15 +89,25 @@ class GameScene: SKScene {
         run (SKAction.repeatForever(sequence)) // repeats the sequence over and over again
     }
     
+    func makeLabels() {
+        livesLabel.fontSize = 18
+        livesLabel.fontColor = .white
+        livesLabel.fontName = "Arial"
+        livesLabel.position = CGPoint(x: frame.minX + 10, y: frame.minY + 10)
+        addChild(livesLabel)
+    }
+    
     func makeEnemy() {
         enemy.removeFromParent()
         enemy = SKSpriteNode(color: .red, size: CGSize(width: 50, height: 20))
         // this will help position enemy above
         enemy.position = CGPoint(x: frame.midX, y: frame.maxY + enemy.size.height / 2)
         addChild(enemy)
-
         // this will allow the enemy to move just above the player ship
         let moveDown = SKAction.moveTo(y: frame.midY + 120, duration: 4)
         enemy.run(moveDown)
+        func createLabels() {
+            livesLabel.fontSize = 18
+        }
     }
 }
