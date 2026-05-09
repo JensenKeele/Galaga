@@ -22,9 +22,9 @@ class GameScene: SKScene {
         makeShip()
         makeMissle()
         missleLaunch()
-        makeEnemy()
         makeLabels()
         makeEnemies()
+        makeEnemyMissile()
     }
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
@@ -115,16 +115,37 @@ class GameScene: SKScene {
     
     func makeEnemies() {
         enemies.removeAll()
-        // number of enemies to spawn and well spaced out
         let count = 6
         let spacing: CGFloat = 50
-        for i in 0..<count {
-            let enemy = SKSpriteNode(color: .red,size: CGSize(width: 30, height: 20))
-            enemies.append(enemy)
-            enemy.position = CGPoint(x: frame.midX - CGFloat(count - 2) * 50 / 2 + CGFloat(i) * 50,y: frame.maxY + enemy.size.height / 2)
-            addChild(enemy)
-            let moveDown = SKAction.moveTo(y: frame.midY + 120,duration: 4)
-            enemy.run(moveDown)
+                for row in 0..<4 {
+                for i in 0..<count {
+                let enemy = SKSpriteNode(color: .red, size: CGSize(width: 30, height: 20))
+                enemies.append(enemy)
+                enemy.position = CGPoint(x: frame.midX - CGFloat(count - 1) * spacing / 2 + CGFloat(i) * spacing, y: frame.maxY + CGFloat(row) * 40)
+                    addChild(enemy)
+                    let targetY = frame.midY + 120 + CGFloat(row) * 40
+                    enemy.run(SKAction.moveTo(y: targetY, duration: 4))
+            }
         }
     }
-}
+    
+    func makeEnemyMissile() {
+        let shoot = SKAction.run { [weak self] in
+                guard let self = self, let shooter = self.enemies.randomElement() else { return }
+
+                let missile = SKSpriteNode(color: .yellow, size: CGSize(width: 5, height: 10))
+                missile.position = shooter.position
+                self.addChild(missile)
+
+                let moveDown = SKAction.moveTo(y: -500, duration: 3)
+                let remove = SKAction.removeFromParent()
+
+                missile.run(SKAction.sequence([moveDown, remove]))
+            }
+
+            let delay = SKAction.wait(forDuration: 1.5)
+            let sequence = SKAction.sequence([shoot, delay])
+
+            run(SKAction.repeatForever(sequence))
+        }
+    }
