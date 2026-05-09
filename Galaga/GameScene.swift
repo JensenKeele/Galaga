@@ -7,13 +7,14 @@
 
 import SpriteKit
 import GameplayKit
+import UIKit //makes alerts work
 
 class GameScene: SKScene {
     
+    private var lives = 3
     private var ship = SKSpriteNode()
     private var missle = SKSpriteNode()
     private var enemy = SKSpriteNode()
-    private var lives = 3
     private var livesLabel = SKLabelNode()
     private var playingGame = false
     private var enemies: [SKSpriteNode] = []
@@ -48,6 +49,8 @@ class GameScene: SKScene {
         makeShip()
         makeMissle()
         missleLaunch()
+        makeEnemyMissile()
+        lives = 3
     }
     
     func createBackground() {
@@ -113,6 +116,30 @@ class GameScene: SKScene {
     }
     
     func gameOver() {
+        playingGame = false
+        self.isPaused = true //pauses game actions
+        let alert = UIAlertController(title: "Game Over!", message: "Would you like to play again?", preferredStyle: .alert)
+        let restart = UIAlertAction(title: "reset", style: .default) { _ in
+            self.isPaused = false
+            let newScene = GameScene(size: self.size)
+                   newScene.scaleMode = .aspectFill
+                   
+                   self.view?.presentScene(
+                       newScene,
+                       transition: SKTransition.fade(withDuration: 1)
+                   )
+               }
+               let quitAction = UIAlertAction(
+                   title: "Quit",
+                   style: .cancel
+               )
+               alert.addAction(restart)
+               alert.addAction(quitAction)
+        DispatchQueue.main.async {
+               if let viewController = self.view?.window?.rootViewController {
+                       viewController.present(alert, animated: true)
+            }
+        }
     }
     
     func makeEnemy() {
