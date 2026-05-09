@@ -47,7 +47,7 @@ class GameScene: SKScene {
     }
     
     func restartGame() {
-        removeAllActions()
+       removeAllActions()
             lives = 3
             playingGame = true
             enemies.removeAll()
@@ -207,7 +207,7 @@ class GameScene: SKScene {
     }
     
     func enemyLoseLive(_ enemy: SKSpriteNode) {
-
+        // when player hits enemy 2 times the enemy dies
         let lives = enemy.userData?["lives"] as? Int ?? 2
         let newLives = lives - 1
 
@@ -220,7 +220,7 @@ class GameScene: SKScene {
     }
     
     override func update(_ currentTime: TimeInterval) {
-
+        // helps the bullets collisons with the enemy
         for bullet in playerBullets {
             for enemy in enemies {
                 if bullet.frame.intersects(enemy.frame) {
@@ -249,6 +249,7 @@ class GameScene: SKScene {
     }
    
     func respawnPlayer() {
+        // has ship respawn
         ship.removeFromParent()
         ship = SKSpriteNode(color: .blue, size: CGSize(width: 50, height: 20))
         ship.position = CGPoint(x: frame.midX, y: frame.minY + 60)
