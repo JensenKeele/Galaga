@@ -18,6 +18,8 @@ class GameScene: SKScene {
     private var livesLabel = SKLabelNode()
     private var playingGame = false
     private var enemies: [SKSpriteNode] = []
+    private var playerBullets: [SKSpriteNode] = []
+   
     
     override func didMove(to view: SKView) {
         createBackground()
@@ -33,24 +35,30 @@ class GameScene: SKScene {
     }
     
     func shipMovement(_ touches: Set<UITouch>, with event: UIEvent?) {
+        guard ship.parent != nil else { return }
         for touch in touches {
-            let location = touch .location(in: self)
+            let location = touch.location(in: self)
             ship.position.x = location.x
             let minY: CGFloat = -400
             let maxY: CGFloat = -200
-            let clampedY = max(minY, min(location.y, maxY))//clamped limits where the ship can go in the scene
+            let clampedY = max(minY, min(location.y, maxY))
             ship.position.y = clampedY
         }
     }
     
     func restartGame() {
-        makeLabels()
-        makeEnemies()
-        makeShip()
-        makeMissle()
-        missleLaunch()
-        makeEnemyMissile()
-        lives = 3
+        removeAllActions()
+            lives = 3
+            playingGame = true
+            enemies.removeAll()
+            playerBullets.removeAll()
+            removeAllChildren()
+            createBackground()
+            makeLabels()
+            makeShip()
+            makeEnemies()
+            missleLaunch()
+            makeEnemyMissile()
     }
     
     func createBackground() {
@@ -85,6 +93,7 @@ class GameScene: SKScene {
         let moveUp = SKAction.moveBy(x: 0, y: 1000, duration: 3) //speed of bullets
         let remove = SKAction.removeFromParent() //removes the bullet from the canvas after the duration
         missle.run(SKAction.sequence([moveUp, remove]))
+        playerBullets.append(missle)
         addChild(missle)
     }
     
@@ -105,13 +114,19 @@ class GameScene: SKScene {
         livesLabel.position = CGPoint(x: frame.minX + 80, y: frame.minY + 40)
         livesLabel.text = "Lives: \(lives)"
         addChild(livesLabel)
+        lives = 3
+        livesLabel.text = "Lives: \(lives)"
     }
     
     func loseLife() {
+
         lives -= 1
         livesLabel.text = "Lives: \(lives)"
+
         if lives <= 0 {
             gameOver()
+        } else {
+            respawnPlayer()
         }
     }
     
@@ -160,11 +175,13 @@ class GameScene: SKScene {
         for row in 0..<4 {
             for i in 0..<count {
                 let enemy = SKSpriteNode(color: .red, size: CGSize(width: 30, height: 20))
+                enemy.userData = ["lives": 2]
                 enemies.append(enemy)
                 enemy.position = CGPoint(x: frame.midX - CGFloat(count - 1) * spacing / 2 + CGFloat(i) * spacing, y: frame.maxY + CGFloat(row) * 40)
                 addChild(enemy)
                 let targetY = frame.midY + 120 + CGFloat(row) * 40
                 enemy.run(SKAction.moveTo(y: targetY, duration: 4))
+                
             }
         }
     }
@@ -187,5 +204,56 @@ class GameScene: SKScene {
         let sequence = SKAction.sequence([shoot, delay])
         
         run(SKAction.repeatForever(sequence))
+    }
+    
+    func enemyLoseLive(_ enemy: SKSpriteNode) {
+
+        let lives = enemy.userData?["lives"] as? Int ?? 2
+        let newLives = lives - 1
+
+        if newLives <= 0 {
+            enemy.removeFromParent()
+            enemies.removeAll { $0 == enemy }
+        } else {
+            enemy.userData?["lives"] = newLives
+        }
+    }
+    
+    override func update(_ currentTime: TimeInterval) {
+
+        for bullet in playerBullets {
+            for enemy in enemies {
+                if bullet.frame.intersects(enemy.frame) {
+                    enemyLoseLive(enemy)
+                    bullet.removeFromParent()
+                    playerBullets.removeAll { $0 == bullet }
+                    break
+                }
+            }
+        }
+
+        enemies.removeAll { $0.parent == nil }
+        playerBullets.removeAll { $0.parent == nil }
+
+        for node in children {
+
+            if let bullet = node as? SKSpriteNode,
+               bullet.color == .yellow {
+
+                if bullet.frame.intersects(ship.frame) {
+                    bullet.removeFromParent()
+                    loseLife()
+                }
+            }
+        }
+    }
+   
+    func respawnPlayer() {
+        ship.removeFromParent()
+        ship = SKSpriteNode(color: .blue, size: CGSize(width: 50, height: 20))
+        ship.position = CGPoint(x: frame.midX, y: frame.minY + 60)
+        ship.physicsBody = SKPhysicsBody(rectangleOf: ship.size)
+        ship.physicsBody?.isDynamic = false
+        addChild(ship)
     }
 }
