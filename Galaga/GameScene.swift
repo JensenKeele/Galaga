@@ -119,11 +119,9 @@ class GameScene: SKScene {
     }
     
     func loseLife() {
-
         lives -= 1
         livesLabel.text = "Lives: \(lives)"
-
-        if lives <= 0 {
+        if lives <= 0 { //checks to see if the lives are up so the game can end
             gameOver()
         } else {
             respawnPlayer()
@@ -133,7 +131,7 @@ class GameScene: SKScene {
     func gameOver() {
         playingGame = false
         self.isPaused = true //pauses game actions
-        let alert = UIAlertController(title: "Game Over!", message: "Would you like to play again?", preferredStyle: .alert)
+        let alert = UIAlertController(title: "Game Over!", message: "Would you like to play again?", preferredStyle: .alert) //controller controls what goes on the screen and not
         let restart = UIAlertAction(title: "reset", style: .default) { _ in
             self.isPaused = false
             let newScene = GameScene(size: self.size)
@@ -234,12 +232,9 @@ class GameScene: SKScene {
 
         enemies.removeAll { $0.parent == nil }
         playerBullets.removeAll { $0.parent == nil }
-
         for node in children {
-
             if let bullet = node as? SKSpriteNode,
                bullet.color == .yellow {
-
                 if bullet.frame.intersects(ship.frame) {
                     bullet.removeFromParent()
                     loseLife()
