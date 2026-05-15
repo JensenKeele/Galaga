@@ -134,15 +134,14 @@ class GameScene: SKScene {
         self.isPaused = true //pauses game actions
         let alert = UIAlertController(title: "Game Over!", message: "Would you like to play again?", preferredStyle: .alert) //controller controls what goes on the screen and not
         let restart = UIAlertAction(title: "reset", style: .default) { _ in
+            
             self.isPaused = false
-            let newScene = GameScene(size: self.size)
-                   newScene.scaleMode = .aspectFill
-                   
-                   self.view?.presentScene(
-                       newScene,
-                       transition: SKTransition.fade(withDuration: 1)
-                   )
-               }
+            
+            self.removeAllActions()
+            self.removeAllChildren()
+            
+            self.restartGame()
+        }
                alert.addAction(restart)
         DispatchQueue.main.async {
                if let viewController = self.view?.window?.rootViewController {
@@ -170,7 +169,7 @@ class GameScene: SKScene {
         for row in 0..<4 {
             for i in 0..<count {
                 let enemy = SKSpriteNode(imageNamed: "Enemy")
-                enemy.size = CGSize(width: 30, height: 20)
+                enemy.size = CGSize(width: 40, height: 40)
                 enemy.userData = ["lives": 2]
                 enemies.append(enemy)
                 enemy.position = CGPoint(x: frame.midX - CGFloat(count - 1) * spacing / 2 + CGFloat(i) * spacing, y: frame.maxY + CGFloat(row) * 40)
