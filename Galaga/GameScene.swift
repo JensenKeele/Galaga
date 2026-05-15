@@ -91,20 +91,19 @@ class GameScene: SKScene {
         missle.physicsBody = SKPhysicsBody(rectangleOf: missle.size)
         missle.physicsBody?.isDynamic = false
         missle.position = CGPoint(x: ship.position.x, y: ship.position.y + ship.size.height / 3) // spawns the missle right on the ship
-        let moveUp = SKAction.moveBy(x: 0, y: 1000, duration: 3) //speed of bullets
-        let remove = SKAction.removeFromParent() //removes the bullet from the canvas after the duration
+        let moveUp = SKAction.moveBy(x: 0, y: 1000, duration: 3) // speed of bullets
+        let remove = SKAction.removeFromParent() // removes the bullet from the canvas after the duration
         missle.run(SKAction.sequence([moveUp, remove]))
         playerBullets.append(missle)
         addChild(missle)
     }
     
     func missleLaunch() {
-        let shoot = SKAction.run { [weak self] in //weak self would break the loop if make missle goes away
+        let shoot = SKAction.run { [weak self] in // weak self would break the loop if make missle goes away
             self?.makeMissle()
         }
-        let delay = SKAction.wait(forDuration: 1) //determines fire rate
+        let delay = SKAction.wait(forDuration: 1) // determines fire rate
         let sequence = SKAction.sequence([shoot, delay]) // shows the order of operations shoot, delay, then repeat
-        
         run (SKAction.repeatForever(sequence)) // repeats the sequence over and over again
     }
     
@@ -122,7 +121,7 @@ class GameScene: SKScene {
     func loseLife() {
         lives -= 1
         livesLabel.text = "Lives: \(lives)"
-        if lives <= 0 { //checks to see if the lives are up so the game can end
+        if lives <= 0 { // checks to see if the lives are up so the game can end
             gameOver()
         } else {
             respawnPlayer()
@@ -131,20 +130,17 @@ class GameScene: SKScene {
     
     func gameOver() {
         playingGame = false
-        self.isPaused = true //pauses game actions
-        let alert = UIAlertController(title: "Game Over!", message: "Would you like to play again?", preferredStyle: .alert) //controller controls what goes on the screen and not
+        self.isPaused = true // pauses game actions
+        let alert = UIAlertController(title: "Game Over!", message: "Would you like to play again?", preferredStyle: .alert) // controller controls what goes on the screen and not
         let restart = UIAlertAction(title: "reset", style: .default) { _ in
-            
             self.isPaused = false
-            
             self.removeAllActions()
             self.removeAllChildren()
-            
             self.restartGame()
         }
                alert.addAction(restart)
         DispatchQueue.main.async {
-               if let viewController = self.view?.window?.rootViewController {
+               if let viewController = self.view?.window?.rootViewController { // gets the main screen controller so the alert is shown
                        viewController.present(alert, animated: true)
             }
         }
@@ -166,38 +162,33 @@ class GameScene: SKScene {
         enemies.removeAll()
         let count = 6
         let spacing: CGFloat = 50
-        for row in 0..<4 {
-            for i in 0..<count {
+        for row in 0..<4 {   // creates number of rows
+            for i in 0..<count { // creates the enemies themselves over each row
                 let enemy = SKSpriteNode(imageNamed: "Enemy")
                 enemy.size = CGSize(width: 40, height: 40)
-                enemy.userData = ["lives": 2]
+                enemy.userData = ["lives": 2] // enemy lives are 2, hit twice to beat
                 enemies.append(enemy)
-                enemy.position = CGPoint(x: frame.midX - CGFloat(count - 1) * spacing / 2 + CGFloat(i) * spacing, y: frame.maxY + CGFloat(row) * 40)
+                enemy.position = CGPoint(x: frame.midX - CGFloat(count - 1) * spacing / 2 + CGFloat(i) * spacing, y: frame.maxY + CGFloat(row) * 40) // spacies enemies evenly across the screen
                 addChild(enemy)
                 let targetY = frame.midY + 120 + CGFloat(row) * 40
                 enemy.run(SKAction.moveTo(y: targetY, duration: 4))
-                
             }
         }
     }
     
     func makeEnemyMissile() {
         let shoot = SKAction.run { [weak self] in
-            guard let self = self, let shooter = self.enemies.randomElement() else { return }
-            
+            guard let self = self, let shooter = self.enemies.randomElement() else { return } // safely picks random enemy to shoot a missile
             let missile = SKSpriteNode(color: .yellow, size: CGSize(width: 5, height: 10))
             missile.position = shooter.position
             self.addChild(missile)
-            
             let moveDown = SKAction.moveTo(y: -500, duration: 3)
             let remove = SKAction.removeFromParent()
-            
             missile.run(SKAction.sequence([moveDown, remove]))
         }
         
         let delay = SKAction.wait(forDuration: 1.5)
         let sequence = SKAction.sequence([shoot, delay])
-        
         run(SKAction.repeatForever(sequence))
     }
     
@@ -205,7 +196,6 @@ class GameScene: SKScene {
         // when player hits enemy 2 times the enemy dies
         let lives = enemy.userData?["lives"] as? Int ?? 2
         let newLives = lives - 1
-
         if newLives <= 0 {
             enemy.removeFromParent()
             enemies.removeAll { $0 == enemy }
@@ -221,13 +211,13 @@ class GameScene: SKScene {
                 if bullet.frame.intersects(enemy.frame) {
                     enemyLoseLive(enemy)
                     bullet.removeFromParent()
-                    playerBullets.removeAll { $0 == bullet }
+                    playerBullets.removeAll { $0 == bullet } // removes the bullet from bullet array after collision
                     break
                 }
             }
         }
 
-        enemies.removeAll { $0.parent == nil }
+        enemies.removeAll { $0.parent == nil } // removes destroyed enemies from enemies array
         playerBullets.removeAll { $0.parent == nil }
         for node in children {
             if let bullet = node as? SKSpriteNode,
