@@ -78,7 +78,8 @@ class GameScene: SKScene {
     
     func makeShip() {
         ship.removeFromParent()
-        ship = SKSpriteNode(color: .blue, size: CGSize(width: 50, height: 20))
+        ship = SKSpriteNode(imageNamed: "Ship 1")
+        ship.size = CGSize(width: 80, height: 80)
         ship.position = CGPoint(x: frame.midX, y: frame.minY + 60)
         ship.physicsBody = SKPhysicsBody(rectangleOf: ship.size)
         ship.physicsBody?.isDynamic = false
@@ -142,12 +143,7 @@ class GameScene: SKScene {
                        transition: SKTransition.fade(withDuration: 1)
                    )
                }
-               let quitAction = UIAlertAction(
-                   title: "Quit",
-                   style: .cancel
-               )
                alert.addAction(restart)
-               alert.addAction(quitAction)
         DispatchQueue.main.async {
                if let viewController = self.view?.window?.rootViewController {
                        viewController.present(alert, animated: true)
@@ -157,7 +153,8 @@ class GameScene: SKScene {
     
     func makeEnemy() {
         enemy.removeFromParent()
-        enemy = SKSpriteNode(color: .red, size: CGSize(width: 30, height: 20))
+        enemy = SKSpriteNode(imageNamed: "Enemy")
+        enemy.size = CGSize(width: 30, height: 20)
         // this will help position enemy above
         enemy.position = CGPoint(x: frame.midX, y: frame.maxY + enemy.size.height / 2)
         addChild(enemy)
@@ -172,7 +169,8 @@ class GameScene: SKScene {
         let spacing: CGFloat = 50
         for row in 0..<4 {
             for i in 0..<count {
-                let enemy = SKSpriteNode(color: .red, size: CGSize(width: 30, height: 20))
+                let enemy = SKSpriteNode(imageNamed: "Enemy")
+                enemy.size = CGSize(width: 30, height: 20)
                 enemy.userData = ["lives": 2]
                 enemies.append(enemy)
                 enemy.position = CGPoint(x: frame.midX - CGFloat(count - 1) * spacing / 2 + CGFloat(i) * spacing, y: frame.maxY + CGFloat(row) * 40)
@@ -246,7 +244,8 @@ class GameScene: SKScene {
     func respawnPlayer() {
         // has ship respawn
         ship.removeFromParent()
-        ship = SKSpriteNode(color: .blue, size: CGSize(width: 50, height: 20))
+        ship = SKSpriteNode(imageNamed: "Ship 1")
+        ship.size = CGSize(width: 80, height: 80)
         ship.position = CGPoint(x: frame.midX, y: frame.minY + 60)
         ship.physicsBody = SKPhysicsBody(rectangleOf: ship.size)
         ship.physicsBody?.isDynamic = false
